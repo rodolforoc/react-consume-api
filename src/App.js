@@ -5,6 +5,7 @@ import "./styles.css";
 
 function App() {
   const [repositories, setRepositories] = useState([]);
+  const [repositoryTitle, setRepositoryTitle] = useState([]);
 
   useEffect(() => {
     api.get('/repositories').then(response => {
@@ -14,13 +15,14 @@ function App() {
 
   async function handleAddRepository() {
     const response = await api.post('/repositories', {
-      title: `Novo Projeto  ${Date.now()}`,
+      title: repositoryTitle,
       url: 'test',
       techs: []
     });
 
     const repository = response.data;
     setRepositories([...repositories, repository]);
+    setRepositoryTitle('');
   }
 
   async function handleRemoveRepository(id) {
@@ -28,6 +30,10 @@ function App() {
     
     const repositoriesUpdated = repositories.filter(repository => repository.id !== id)
     setRepositories(repositoriesUpdated);
+  }
+
+  function handleTitle(e) {
+    setRepositoryTitle(e.target.value);
   }
 
   return (
@@ -41,7 +47,8 @@ function App() {
           </li>
         ))}
       </ul>
-
+      
+      <input type="text" onChange={handleTitle} />
       <button onClick={handleAddRepository}>Adicionar</button>
     </div>
   );
